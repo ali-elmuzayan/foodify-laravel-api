@@ -6,16 +6,20 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Scope;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+#[Fillable(['name', 'email', 'password', 'otp', 'otp_expires_at', 'phone', 'status', 'role', 'verified_at'])]
+#[Hidden(['password', 'remember_token', 'otp', 'otp_expires_at', 'verified_at'])]
+class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, HasUuids, Notifiable;
 
     /**
      * Get the attributes that should be cast.
@@ -25,8 +29,46 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
+            'verified_at' => 'datetime',
             'password' => 'hashed',
+            'otp_expires_at' => 'datetime',
+            'verified_at' => 'datetime',
         ];
     }
+
+    // check if the user if verified
+    public function isVerified(): bool
+    {
+        return $this->verified_at !== null;
+    }
+
+    // validate teh user 
+    public function validateUser(): void
+    {
+        // by select verified_at to now()
+        $this->verified_at = now();
+        $this->save();
+    }
+
+    // get the JWT identifier
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    // get the JWT custom claims
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
+
+    /**
+     * Scopes 
+     */
+    #[Scope('wherePhone', ['phone'])]
+    public function wherePhone(Builder $query, string $phone): Builder
+    {
+        return $query->where('phone', $phone);
+    }   
 }
