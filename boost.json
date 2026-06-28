@@ -1,0 +1,8 @@
+{
+    "agents": [
+        "cursor",
+        "codex"
+    ],
+    "cloud": false,
+    "guidelines": true
+}
