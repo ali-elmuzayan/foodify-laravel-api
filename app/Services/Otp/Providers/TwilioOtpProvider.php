@@ -20,14 +20,17 @@ class TwilioOtpProvider implements OtpProvider
     public function send(User $user): void 
     {
 
+        // WE NEED TO DECRYPT THE OTP
+        $otp = $user->otp;
+
         try {
             $this->client->messages->create($user->phone, [
                 'from' => $this->from,
-                'body' => "Your Foodify verfication code is: {$user->otp}"
+                'body' => "Your Foodify verfication code is: {$otp}"
             ]);
         } catch (\Exception $e) {
             Log::error("Failed to send OTP: {$e->getMessage()}");
             throw new \Exception("Failed to send OTP: please connect us");
+            }
         }
     }
-}

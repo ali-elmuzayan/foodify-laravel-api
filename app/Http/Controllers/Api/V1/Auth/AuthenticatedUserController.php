@@ -5,11 +5,15 @@ namespace App\Http\Controllers\Api\V1\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Auth\LoginRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Actions\Auth\LoginUser;
 
 class AuthenticatedUserController extends Controller
 {
+
+    public function __construct(private LoginUser $loginUserAction)
+    {
+    }
     /**
      * Login a user
      */
@@ -17,18 +21,8 @@ class AuthenticatedUserController extends Controller
     {
         $credentials = $request->validated();
         try {
-            if (! $token = JWTAuth::attempt(['phone' => $credentials['phone'], 'password' => $credentials['password']])) {
-                return $this->errorResponse('Invalid credentials', 'Invalid credentials', 401);
-            }
-            $user = JWTAuth::user();
-
-            if (! $user->isVerified()) {
-                JWTAuth::setToken($token)->invalidate();
-
-                return $this->errorResponse('User not verified', 'Please verify your account to continue', 401);
-            }
-
-            return $this->successResponse(['token' => $token, 'user' => $user], 'User authenticated successfully');
+            $data = $this->loginUserAction->handle($credentials);
+            return $this->successResponse($data, 'User authenticated successfully');
         } catch (\Exception $e) {
             return $this->errorResponse('Error authenticating user', $e->getMessage(), 500);
         }
@@ -37,10 +31,10 @@ class AuthenticatedUserController extends Controller
     /**
      * Show Authenticated User
      */
-    public function show(Request $request)
+    public function show()
     {
-        
-        return $this->successResponse($request->user(), 'Retrieved authenticated user successfully');
+        $user = JWTAuth::user();
+        return $this->successResponse($user, 'Retrieved authenticated user successfully');
     }
 
     /**

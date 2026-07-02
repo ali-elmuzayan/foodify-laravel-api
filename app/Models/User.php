@@ -73,7 +73,7 @@ class User extends Authenticatable implements JWTSubject
     /**
      * Scopes 
      */
-    #[Scope('wherePhone', ['phone'])]
+    #[Scope]
     public function wherePhone(Builder $query, string $phone): Builder
     {
         return $query->where('phone', $phone);

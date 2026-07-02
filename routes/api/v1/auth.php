@@ -2,29 +2,22 @@
 
 use App\Http\Controllers\Api\V1\Auth\AuthenticatedUserController;
 use App\Http\Controllers\Api\V1\Auth\ForgetPasswordController;
-use App\Http\Controllers\Api\V1\Auth\RegisteredUserController;
+
 use App\Http\Controllers\Api\V1\Auth\ResendOTPController;
 use App\Http\Controllers\Api\V1\Auth\ResetPasswordController;
 use App\Http\Controllers\Api\V1\Auth\RefreshTokenController;
+use App\Http\Controllers\Api\V1\Auth\RegisteredUserController;
 use App\Http\Controllers\Api\V1\Auth\VerifyUserController;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
-// Authenticatation:
-/**
- * POST => /api/auth/login
- * POST => /api/auth/register
- * POST => /api/auth/logout
- * POST => /api/auth/me
- * POST => /api/auth/forgot-password
- * POST => /api/auth/reset-password
- */
+// Non Authentication Routes
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthenticatedUserController::class, 'store'])->name('login');
     Route::post('/register', [RegisteredUserController::class, 'store']);
     Route::post('/forget-password', [ForgetPasswordController::class, 'store']);
     Route::post('/reset-password', [ResetPasswordController::class, 'store']);
     Route::post('/verify-otp', [VerifyUserController::class, '__invoke']);
+    Route::post('/verify-user', [VerifyUserController::class, '__invoke']);
     Route::post('/resend-otp', ResendOTPController::class);
 
 });

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\V1\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\ResendOTPRequest;
 use App\Models\User;
-use App\Services\Auth\OtpService;
+use App\Services\Otp\OtpService;
 
 class ResendOTPController extends Controller
 {

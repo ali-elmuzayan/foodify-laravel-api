@@ -12,7 +12,7 @@ class ForgetPasswordController extends Controller
     public function store(ForgetPasswordRequest $request, OtpService $otpService) {
         $validated = $request->validated(); 
 
-        $user = User::where('phone', $validated['phone'])->firstOrFail();
+        $user = User::wherePhone($validated['phone'])->firstOrFail();
         // send the OTP to the user's phone number to verify the user's phone number 
         $otpService->issueOtp($user);
 

@@ -23,13 +23,15 @@ class OtpService
     {
         $otp = $this->generateOtp();
 
+
         $user->forceFill([
-            'otp' => Hash::make($otp),
-            'otp_expires_at' => now()->addMinutes(config('otp.expires_in_minutes')),
+            'otp' => $otp,
+            'otp_expires_at' => now()->addMinutes((int)config('otp.expires_in_minutes')),
         ])->save();
 
 
         Log::info('OTP issued to the user', ['user' => $user->id, 'otp' => $otp]);
+
 
         $this->otpProvider->send($user);
     }
@@ -46,7 +48,7 @@ class OtpService
         if ($this->isOtpExpired($user)) {
             return false;
         }
-        return Hash::check($otp, $user->otp);
+        return $otp === $user->otp;
     }
 
 
