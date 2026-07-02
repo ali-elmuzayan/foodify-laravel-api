@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Category;
+use App\Models\Meal;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -20,6 +22,18 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+        ]);
+
+        $categories = Category::factory(10)->create();
+
+        foreach ($categories as $category) {
+            Meal::factory(10)->create([
+                'category_id' => $category->id,
+            ]);
+        }
+
+        $this->call([
+            SettingSeeder::class,
         ]);
     }
 }

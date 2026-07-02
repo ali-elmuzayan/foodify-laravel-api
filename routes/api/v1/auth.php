@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\V1\Auth\RegisteredUserController;
 use App\Http\Controllers\Api\V1\Auth\ResendOTPController;
 use App\Http\Controllers\Api\V1\Auth\ResetPasswordController;
 use App\Http\Controllers\Api\V1\Auth\RefreshTokenController;
-use App\Http\Controllers\Api\V1\Auth\VerifyOTPController;
+use App\Http\Controllers\Api\V1\Auth\VerifyUserController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -22,9 +22,9 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthenticatedUserController::class, 'store'])->name('login');
     Route::post('/register', [RegisteredUserController::class, 'store']);
-    Route::post('/forgot-password', [ForgetPasswordController::class, 'store']);
+    Route::post('/forget-password', [ForgetPasswordController::class, 'store']);
     Route::post('/reset-password', [ResetPasswordController::class, 'store']);
-    Route::post('/verify-otp', [VerifyOTPController::class, '__invoke']);
+    Route::post('/verify-otp', [VerifyUserController::class, '__invoke']);
     Route::post('/resend-otp', ResendOTPController::class);
 
 });

@@ -7,19 +7,22 @@ use App\Http\Requests\Api\V1\Auth\VerifyOtpRequest;
 use App\Models\User;
 use App\Services\Auth\OtpService;
 
-class VerifyOTPController extends Controller
+class VerifyUserController extends Controller
 {
     /**
      * Handle the incoming request.
      */
     public function __invoke(VerifyOtpRequest $request, OtpService $otpService)
     {
-        // get the user
-        $user = User::where('phone', $request->phone)->firstOrFail();
+        $validated = $request->validated();
+        $user = User::wherePhone($validated['phone'])->firstOrFail();
 
-        // verify the OTP
+        // assert if OTP is valid
+        $otpService->assertValidOtp($user, $validated['otp']);
+
+        // reset OTP
         $otpService->resetOtp($user);
-        $user->validateUser();
+        $user->verifyUser();
         
 
         // return success response

@@ -13,6 +13,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Scope;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 #[Fillable(['name', 'email', 'password', 'otp', 'otp_expires_at', 'phone', 'status', 'role', 'verified_at'])]
 #[Hidden(['password', 'remember_token', 'otp', 'otp_expires_at', 'verified_at'])]
@@ -36,6 +37,12 @@ class User extends Authenticatable implements JWTSubject
         ];
     }
 
+    // Relationships:
+    public function cart(): HasOne
+    {
+        return $this->hasOne(Cart::class);
+    }
+
     // check if the user if verified
     public function isVerified(): bool
     {
@@ -43,7 +50,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
     // validate teh user 
-    public function validateUser(): void
+    public function verifyUser(): void
     {
         // by select verified_at to now()
         $this->verified_at = now();
